@@ -42,7 +42,7 @@ class Auth:
             hashed_password = _hash_password(password).decode('utf-8')
             user = self._db.add_user(email, hashed_password)
             return user
-    
+
     def destroy_session(self, user_id: int) -> None:
         """ Destroy a user session
         """
@@ -72,7 +72,7 @@ class Auth:
             return user
         except NoResultFound:
             return None
-    
+
     def update_password(self, reset_token: str, password: str) -> None:
         """ Update user password
         """
@@ -109,4 +109,3 @@ class Auth:
                            hashed_password.encode('utf-8'))
         except (NoResultFound, InvalidRequestError):
             return False
-    

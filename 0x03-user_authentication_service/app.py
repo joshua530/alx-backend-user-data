@@ -57,6 +57,7 @@ def profile() -> tuple:
         abort(403)
     return jsonify({"email": user.email}), 200
 
+
 @app.route('/reset_password', methods=['PUT'], strict_slashes=False)
 def update_password() -> tuple:
     """ Update password
@@ -71,6 +72,7 @@ def update_password() -> tuple:
     except ValueError:
         abort(403)
 
+
 @app.route('/reset_password', methods=['POST'], strict_slashes=False)
 def reset_password() -> tuple:
     """ Reset password
@@ -82,6 +84,7 @@ def reset_password() -> tuple:
                         "reset_token": token}), 200
     except ValueError:
         abort(403)
+
 
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout():
@@ -96,6 +99,7 @@ def logout():
         abort(403)
     AUTH.destroy_session(user.id)
     return redirect(url_for('home'))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")

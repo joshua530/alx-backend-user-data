@@ -36,7 +36,7 @@ class DB:
         self._session.commit()
 
         return user
-    
+
     def update_user(self, user_id: int, **kwargs) -> None:
         """ Update users attributes
         Returns: None
@@ -50,7 +50,7 @@ class DB:
 
         for key, value in kwargs.items():
             setattr(user, key, value)
-        
+
         self._session.commit()
 
     def find_user_by(self, **kwargs) -> User:
