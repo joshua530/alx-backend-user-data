@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """ Database for ORM """
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
-from typing import TypeVar
 from user import Base, User
 
 
@@ -20,7 +18,7 @@ class DB:
         self.__session = None
 
     @property
-    def _session(self):
+    def _session(self) -> sessionmaker:
         """ Session Getter Method """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
@@ -36,22 +34,6 @@ class DB:
         self._session.commit()
 
         return user
-
-    def update_user(self, user_id: int, **kwargs) -> None:
-        """ Update users attributes
-        Returns: None
-        """
-        user = self.find_user_by(id=user_id)
-
-        column_names = User.__table__.columns.keys()
-        for key in kwargs.keys():
-            if key not in column_names:
-                raise ValueError
-
-        for key, value in kwargs.items():
-            setattr(user, key, value)
-
-        self._session.commit()
 
     def find_user_by(self, **kwargs) -> User:
         """ Finds user by key word args
@@ -71,3 +53,19 @@ class DB:
             raise NoResultFound
 
         return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """ Update users attributes
+        Returns: None
+        """
+        user = self.find_user_by(id=user_id)
+
+        column_names = User.__table__.columns.keys()
+        for key in kwargs.keys():
+            if key not in column_names:
+                raise ValueError
+
+        for key, value in kwargs.items():
+            setattr(user, key, value)
+
+        self._session.commit()
