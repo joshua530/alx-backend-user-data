@@ -11,14 +11,19 @@ from api.v1.views import app_views
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login() -> Tuple[str, int]:
     """POST /api/v1/auth_session/login
+
+    Creates a new user session if correct credentials are provided, else
+    an error is returned
     """
     not_found_res = {"error": "no user found for this email"}
     email = request.form.get('email')
+
     if email is None or len(email.strip()) == 0:
         return jsonify({"error": "email missing"}), 400
     password = request.form.get('password')
     if password is None or len(password.strip()) == 0:
         return jsonify({"error": "password missing"}), 400
+
     try:
         users = User.search({'email': email})
     except Exception:
@@ -37,6 +42,8 @@ def login() -> Tuple[str, int]:
     '/auth_session/logout', methods=['DELETE'], strict_slashes=False)
 def logout() -> Tuple[str, int]:
     """DELETE /api/v1/auth_session/logout
+
+    invalidates a user session. error is returned if unsuccessful
     """
     from api.v1.app import auth
     is_destroyed = auth.destroy_session(request)

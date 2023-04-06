@@ -33,28 +33,30 @@ if auth_type == 'session_db_auth':
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
-    """Unauthorized handler.
+    """handles http 401
     """
     return jsonify({"error": "Unauthorized"}), 401
 
 
 @app.errorhandler(403)
 def forbidden(error) -> str:
-    """Forbidden handler.
+    """handles http 403
     """
     return jsonify({"error": "Forbidden"}), 403
 
 
 @app.errorhandler(404)
 def not_found(error) -> str:
-    """ Not found handler
+    """ handles http 404
     """
     return jsonify({"error": "Not found"}), 404
 
 
 @app.before_request
 def authenticate_user():
-    """Authenticates a user before processing a request.
+    """Authentication middleware
+
+    authenticates user for paths that require authentication
     """
     excluded_paths = [
         '/api/v1/status/',

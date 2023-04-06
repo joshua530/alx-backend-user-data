@@ -8,7 +8,7 @@ from typing import List, TypeVar
 
 
 class Auth:
-    """ Authentication """
+    """ Deals with Authentication """
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """ Checks if API routes require authentication """
@@ -29,13 +29,12 @@ class Auth:
         else:
             return request.headers.get('Authorization')
 
-    def current_user(self, request=None) -> TypeVar('User'):
-        """ placeholder """
-        return None
-
-    def session_cookie(self, request=None):
+    def session_cookie(self, request=None) -> None:
         """ Returns cookie value from a request """
         if request is None:
             return None
-
         return request.cookies.get(getenv('SESSION_NAME'))
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """ placeholder to be implemented by child classes """
+        return None
