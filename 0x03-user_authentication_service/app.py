@@ -11,28 +11,15 @@ AUTH = Auth()
 
 @app.route('/', methods=['GET'], strict_slashes=False)
 def home() -> str:
-    """ Home page
+    """ Serves home page
     """
     return jsonify({"message": "Bienvenue"})
-
-
-@app.route('/users', methods=['POST'], strict_slashes=False)
-def register_user() -> Union[str, tuple]:
-    """ Register user
-    """
-    email = request.form.get('email')
-    password = request.form.get('password')
-    try:
-        AUTH.register_user(email, password)
-        return jsonify({"email": email, "message": "user created"})
-    except ValueError:
-        return jsonify({"message": "email already registered"}), 400
 
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login() -> str:
     """
-    Login user
+    creates new user session
     """
     email = request.form.get('email')
     password = request.form.get('password')
@@ -44,23 +31,9 @@ def login() -> str:
     return res
 
 
-@app.route('/profile', methods=['GET'], strict_slashes=False)
-def profile() -> tuple:
-    """
-    Get user profile
-    """
-    session_id = request.cookies.get('session_id')
-    if not session_id:
-        abort(403)
-    user = AUTH.get_user_from_session_id(session_id)
-    if not user:
-        abort(403)
-    return jsonify({"email": user.email}), 200
-
-
 @app.route('/reset_password', methods=['PUT'], strict_slashes=False)
 def update_password() -> tuple:
-    """ Update password
+    """ updates user password
     """
     email = request.form.get('email')
     reset_token = request.form.get('reset_token')
@@ -75,7 +48,7 @@ def update_password() -> tuple:
 
 @app.route('/reset_password', methods=['POST'], strict_slashes=False)
 def reset_password() -> tuple:
-    """ Reset password
+    """ resets user password
     """
     email = request.form.get('email')
     try:
@@ -89,7 +62,9 @@ def reset_password() -> tuple:
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout():
     """
-    Logout user
+    destroys user session
+
+    403 error is returned if session is invalid or does not exist
     """
     session_id = request.cookies.get('session_id')
     if not session_id:
@@ -99,6 +74,33 @@ def logout():
         abort(403)
     AUTH.destroy_session(user.id)
     return redirect(url_for('home'))
+
+
+@app.route('/users', methods=['POST'], strict_slashes=False)
+def register_user() -> Union[str, tuple]:
+    """ Serves user regisration route
+    """
+    email = request.form.get('email')
+    password = request.form.get('password')
+    try:
+        AUTH.register_user(email, password)
+        return jsonify({"email": email, "message": "user created"})
+    except ValueError:
+        return jsonify({"message": "email already registered"}), 400
+
+
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile() -> tuple:
+    """
+    fetches user's profile from session details
+    """
+    session_id = request.cookies.get('session_id')
+    if not session_id:
+        abort(403)
+    user = AUTH.get_user_from_session_id(session_id)
+    if not user:
+        abort(403)
+    return jsonify({"email": user.email}), 200
 
 
 if __name__ == "__main__":
