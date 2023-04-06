@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Password encryption"""
+"""Password encryption
+
+creates and verifies passwords using bcrypt algorithm
+"""
 
 import bcrypt
 
 
 def hash_password(password: str) -> bytes:
-    """returns salted, hashed password, which is a byte string"""
+    """salts, then hashes password which is then returned"""
     encoded = password.encode()
     hashed = bcrypt.hashpw(encoded, bcrypt.gensalt())
 
@@ -13,7 +16,11 @@ def hash_password(password: str) -> bytes:
 
 
 def is_valid(hashed_password: bytes, password: str) -> bool:
-    """validates that provided password matches the hashed password"""
+    """validates that provided password matches the hashed password
+
+    Return:
+        True if matches, False if not
+    """
     encoded = password.encode()
     if bcrypt.checkpw(encoded, hashed_password):
         return True
